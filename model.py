@@ -6,6 +6,8 @@ from torch.utils.data import Dataset, DataLoader
 import torchvision.transforms.v2 as transforms
 import torchvision.transforms.functional as F
 import matplotlib.pyplot as plt
+from pathlib import Path
+from PIL import Image
 
 import utils
 
@@ -15,7 +17,9 @@ torch.cuda.is_available()
 IMG_HEIGHT = 28
 IMG_WIDTH = 28
 IMG_CHS = 1
-N_CLASSES = 24
+NUM_ASL_CLASSES = 24   # sign_mnist excludes J and Z
+UNKNOWN_CLASS = 24     # last unkown class
+N_CLASSES = 25		   # total classes
 
 train_df = pd.read_csv("4. Data Augmentation/Data/ASL_Data/sign_mnist_train.csv")
 valid_df = pd.read_csv("4. Data Augmentation/Data/ASL_Data/sign_mnist_valid.csv")
@@ -36,6 +40,26 @@ class MyDataset(Dataset):
 
     def __len__(self):
         return len(self.xs)
+
+class UnknownHandDataset(Dataset):
+    def __init__(self, root_dir, transform=None):
+        self.root_dir = Path(root_dir)
+        self.transform = transform
+
+        self.image_paths = []
+        for ext in ("*.jpg", "*.png", "*.jpeg"): # remove jpeg? keep just to be safe
+            self.image_paths.extend(self.root_dir.rglob(ext))
+
+    def __len__(self):
+        return len(self.image_paths)
+
+    def __getitem__(self, idx):
+        img = Image.open(self.image_paths[idx]).convert("L")  # grayscale
+        if self.transform:
+            img = self.transform(img)
+
+        label = UNKNOWN_CLASS
+        return img, label
 
 n = 32
 train_data = MyDataset(train_df)
