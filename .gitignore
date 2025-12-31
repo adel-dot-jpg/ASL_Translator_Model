@@ -1,0 +1,13 @@
+# ignore all datasets
+Data/
+
+# Python
+__pycache__/
+*.pyc
+
+# Models
+*.pt
+*.pth
+
+# Notebooks
+.ipynb_checkpoints/
