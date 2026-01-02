@@ -6,7 +6,6 @@ from torch.optim import Adam
 from torch.utils.data import Dataset, DataLoader, ConcatDataset
 import torchvision.transforms.v2 as transforms
 import torchvision.transforms.functional as F
-import matplotlib.pyplot as plt
 from pathlib import Path
 from PIL import Image
 
